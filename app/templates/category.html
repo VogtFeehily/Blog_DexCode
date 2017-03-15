@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ category.tag }}{% endblock %}
+
+{% block container %}
+    {{ moment.include_moment() }}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-11 col-xs-12">
+                {% for post in posts %}
+                    <div class="blog-box the-font article">
+                        <article>
+                            <a href="/post/{{ post.id }}"><h1 style="color:#34495E">
+                                <strong>{{ post.title }}</strong></h1></a>
+                            <p class="labeltag">
+                                {% for label in post.labels %}
+                                    <span class="label label-info text-left">{{ label.label }}</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                <small><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span><span
+                                        style="color:#8C8C8C;">{{ moment(post.timestamp).calendar() }}</span>
+                                </small>
+                            </p>
+                            <div class="post-alert">
+                                本博客采用创作共用版权协议,要求署名、非商业用途和保持一致。转载本博客中的任何博文、随笔以及书评也必须遵循署名-非商业用途-保持一致的创作共用协议。
+                            </div>
+                            <p>
+                                {% if post.summery_html %}
+                                    {{ post.summery_html | safe }}
+                                {% else %}
+                                    {{ post.summery }}
+                                {% endif %}
+                            </p>
+
+                            <div style="border-top:1px solid #EBEBEB;padding:10px 5px;margin-top:20px;">
+                                <p>
+                                <h6><a href="/category/{{ post.category.tag }}"><span
+                                        class="label label-primary text-left"><span
+                                        class="glyphicon glyphicon-th-list"
+                                        aria-hidden="true"></span> {{ post.category.tag }}</span></a></h6>
+                                <a href="/post/{{ post.id }}" style="float:right; margin-bottom: 10px;">
+                                    <button class="btn  btn-primary text-right">了解更多 <span
+                                            class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    </button>
+                                </a>
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if pagination %}
+            <div>
+                {{ macros.pagination_widget(pagination, '.category', tag = category.tag) }}
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}DexCodeXYZ{% endblock %}
+
+{% block container %}
+    {{ moment.include_moment() }}
+    <div class="jumbotron" style="background-color: #28a0f6; box-shadow: 0px 5px 10px #969696;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7 col-sm-12">
+                    <h2 class="dexcode">DexCode.xyz</h2>
+                    <p class="lead dexcode">
+                        <strong style="margin-left: 150px">——用代码探索未知世界</strong>
+                    </p>
+                </div>
+                <div class="col-md-5 col-sm-12"><img src="../static/img/luffy.png" style="height: 180px; width: 230px; float: right;"></div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-8 col-xs-12">
+                {% for post in posts %}
+                    <div class="blog-box the-font article">
+                        <article>
+                            <a href="/post/{{ post.id }}"><h1 style="color:#34495E">
+                                <strong>{{ post.title }}</strong></h1></a>
+                            <p class="labeltag">
+                                {% for label in post.labels %}
+                                    <span class="label label-info text-left">{{ label.label }}</span>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                <small><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span><span
+                                        style="color:#8C8C8C;">{{ moment(post.timestamp).calendar() }}</span>
+                                </small>
+                            </p>
+                            <div class="post-alert">
+                                本博客采用创作共用版权协议,要求署名、非商业用途和保持一致。转载本博客中的任何博文、随笔以及书评也必须遵循署名-非商业用途-保持一致的创作共用协议。
+                            </div>
+                            <p>
+                                {% if post.summery_html %}
+                                    {{ post.summery_html | safe }}
+                                {% else %}
+                                    {{ post.summery }}
+                                {% endif %}
+                            </p>
+
+                            <div style="border-top:1px solid #EBEBEB;padding:10px 5px;margin-top:20px;">
+                                <p>
+                                <h6><a href="/category/{{ post.category.tag }}"><span
+                                        class="label label-primary text-left"><span
+                                        class="glyphicon glyphicon-th-list"
+                                        aria-hidden="true"></span> {{ post.category.tag }}</span></a></h6>
+                                <a href="/post/{{ post.id }}" style="float:right; margin-bottom: 10px;">
+                                    <button class="btn  btn-primary text-right">了解更多 <span
+                                            class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    </button>
+                                </a>
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <div class="blog-box the-font">
+                    <div style="margin: 10px 10px">
+                        <h2>Category</h2>
+                        {% for category in categories %}
+                            <span class="label">
+                                <a href="/category/{{ category.tag }}">
+                                    <span class="label label-primary text-left">
+                                        <span class="glyphicon glyphicon-th-list"
+                                              aria-hidden="true"></span> {{ category.tag }}
+                                        <span class="badge">{{ category.count }}</span>
+                                    </span>
+                                </a>
+                            </span>
+                        {% endfor %}
+                    </div>
+                    <hr>
+                    <div style="margin: 10px 10px">
+                        <h2>Labels</h2>
+                        {% for label in labels %}
+                            <span class="label label-info text-left">{{ label.label }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if pagination %}
+            <div>
+                {{ macros.pagination_widget(pagination, '.index') }}
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

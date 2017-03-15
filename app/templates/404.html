@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}404 NotFound!{% endblock %}
+
+{% block container %}
+
+<div class="container" style="padding-bottom:100px; padding-top: 100px">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12 text-center">
+            <div class="col-md-5 col-md-offset-4 col-sm-7 col-sm-offset-4 col-xs-12">
+                <img src="{{ url_for('static',filename='img/404.png') }}" class="img-responsive">
+            </div>
+			<div class="col-md-12" style="padding-top:50px;">
+			    <a href="/" class="btn btn-embossed btn-primary">主页<span class=" glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

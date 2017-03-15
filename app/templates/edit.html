@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}EDIT{% endblock %}
+
+{% block container %}
+    {{ pagedown.include_pagedown() }}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <article class="blog-box the-font article">
+                    <form method="post" action="">
+                        {{ form.csrf_token }}
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12 col-xs-12">
+                                {{ form.title.label }}
+                                {{ form.title(class="form-control",placeholder="Title") }}
+                            </div>
+                            <div class="col-md-4 col-sm-12 col-xs-12">
+                                <label>Label</label>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" placeholder="{{ category }}" disabled/>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form.labels.label }}
+                        <div class="tagsinput-primary">
+                            {{ form.labels(class="form-control tagsinput") }}<br>
+                        </div>
+                        <script type="text/javascript"
+                                src="{{ url_for('static',filename='dist/js/flat-ui.min.js') }}"></script>
+                        <script>
+                            $(".tagsinput").tagsinput();
+                        </script>
+                        {{ form.summery.label }}
+                        {{ form.summery(class="form-control",placeholder="Title", rows="20") }}<br>
+                        {{ form.body.label }}
+                        {{ form.body(class="form-control",placeholder="Title", rows="50") }}<br>
+                        {{ form.submit }}
+                    </form>
+                </article>
+            </div>
+        </div>
+    </div>
+{% endblock %}

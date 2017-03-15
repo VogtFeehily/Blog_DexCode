@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}{% endblock %} | DexCodeXYZ</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/css/flat-ui.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dexcode.css') }}">
+
+    <link rel="shortcut icon" href="{{ url_for('static',filename='dexcode.ico') }}">
+
+    <script type="text/javascript" src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='dexcode.js') }}"></script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+<body style="background-color: #f2f2f2">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+                <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" style="padding:0px 25px" href="/"><img
+                    src="{{ url_for('static',filename='img/dexcode.png') }}" style="height: 50px; width: 50px;"></a>
+            <a class="navbar-brand" href="/">DexCode</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Blogs</a></li>
+                <li class="dropdown">
+                    <a href="/" class="dropdown-toggle" data-toggle="dropdown">Caregory</a>
+                    <ul class="dropdown-menu" role="menu">
+                        {% for category in categories %}
+                            <li><a href="/category/{{ category.tag }}">{{ category.tag }} <span class="badge">{{ category.count }}</span></a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li><a href="/me">About Me</a></li>
+            </ul>
+            {% if current_user.is_authenticated %}
+                {{ current_user.username }}
+                <button type="button" class="btn btn-primary navbar-btn btn-sm navbar-right"><strong><a href="/logout" style="color: #ffffff">LogOut</a></strong></button>
+            {% else %}
+                <button type="button" class="btn btn-primary navbar-btn btn-sm navbar-right" data-toggle="modal"
+                        data-target="#loginbtn"><strong>LogIn</strong></button>
+            {% endif %}
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</nav><!-- /navbar -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="loginbtn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" aria-hidden="true" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">登录 - 是一种态度</h4>
+            </div>
+            <div class="modal-body">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-warning alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12" style="margin: 25px 0px">
+                        <form method="post" action="">
+                            {{ loginform.csrf_token }}
+                            {{ loginform.username.label }}
+                            {{ loginform.username(class="form-control",placeholder="用户名") }}
+                            {{ loginform.password.label }}
+                            {{ loginform.password(class="form-control") }}
+                            <br>
+                            {{ loginform.remember_me }}
+                            {{ loginform.remember_me.label }}
+                            <div style="padding: 20px 5px;float: right;">{{ loginform.submit(class="btn btn-primary") }}</div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% block container %}
+{% endblock %}
+
+<footer style="background-color: #28a0f6;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7 col-xs-12 dexcode">
+                <p class="lead" style="padding-top: 30px;"><strong>&copy;Dexter 2016</strong></p>
+            </div>
+            <div class="col-md-5 col-xs-12 dexcode">
+                <div>
+                    <a href="https://github.com/VogtFeehily"><img
+                            src="{{ url_for('static',filename='icons/github.svg') }}" class="myicon"></a>
+                    <a href="http://weibo.com/5347547799/profile"><img
+                            src="{{ url_for('static',filename='icons/weibo.svg') }}" class="myicon"></a>
+                    <a href="https://www.zhihu.com/people/wen-yi-yuan-ma-chu-de-ren-sheng"><img
+                            src="{{ url_for('static',filename='icons/zhihu.svg') }}" class="myicon"></a>
+                    <a href="https://twitter.com/Vogtfeehily"><img
+                            src="{{ url_for('static',filename='icons/twitter.svg') }}" class="myicon"></a>
+                    <a href="https://plus.google.com/103492012974460182097"><img
+                            src="{{ url_for('static',filename='icons/google+.svg') }}" class="myicon"></a>
+                    <a href="mailto:vogtfeehily@gmail.comn"><img
+                            src="{{ url_for('static',filename='icons/gmail.svg') }}" class="myicon"></a>
+                </div>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 col-md-offset-7 col-xs-12">
+                <a href="/aboutsite">
+                    <small class="dexcode"><u>(ABOUT THIS SITE)</u></small>
+                </a>
+                <p class="lead dexcode" style="font-size: medium">Powered By <strong><a
+                        href="https://m.do.co/c/30df8904082d" style="color: #ffffff">DigitalOcean</a></strong></p>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
