@@ -219,7 +219,7 @@ def undo_like_post():
 
 
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
-def try_post(id):
+def post(id):
     categories = Category.query.all()
     form = CommentForm()
     loginform = LoginForm()
