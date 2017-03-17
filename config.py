@@ -8,7 +8,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:LocK&KeY1314@localhost:3306/dexcode'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root123@localhost:3306/dexcode'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     POSTS_PER_PAGE = 8
     COMMENTS_PER_POST = 15
