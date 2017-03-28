@@ -18,7 +18,7 @@ class PostForm(FlaskForm):
                            choices=[('前端', '前端'),
                                     ('后台', '后台'),
                                     ('机器学习', '机器学习'),
-                                    ('党员博文', '党员博文')])
+                                    ('数据分析', '数据分析')])
     title = StringField('Title', validators=[DataRequired()])
     body = PageDownField('Body', validators=[DataRequired()])
     summery = PageDownField('Summery', validators=[DataRequired()])

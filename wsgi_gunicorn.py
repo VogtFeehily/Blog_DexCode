@@ -1,3 +1,4 @@
+# coding=utf-8
 from werkzeug.contrib.fixers import ProxyFix
 from app import create_app
 

@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}{% endblock %} | DexCodeXYZ</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='flat/css/flat-ui.min.css') }}">
+    <title>{% block title %}{% endblock %}DexCodeXYZ</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dexcode.css') }}">
 
     <link rel="shortcut icon" href="{{ url_for('static',filename='dexcode.ico') }}">
 
-    <script type="text/javascript" src="{{ url_for('static',filename='jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='dexcode.js') }}"></script>
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -108,17 +108,17 @@
             </div>
             <div class="col-md-5 col-xs-12 dexcode">
                 <div>
-                    <a href="https://github.com/VogtFeehily"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/github.svg') }}" class="myicon"></a>
-                    <a href="http://weibo.com/5347547799/profile"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/weibo.svg') }}" class="myicon"></a>
-                    <a href="https://www.zhihu.com/people/wen-yi-yuan-ma-chu-de-ren-sheng"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/zhihu.svg') }}" class="myicon"></a>
-                    <a href="https://twitter.com/Vogtfeehily"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/twitter.svg') }}" class="myicon"></a>
-                    <a href="https://plus.google.com/103492012974460182097"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/google+.svg') }}" class="myicon"></a>
-                    <a href="mailto:vogtfeehily@gmail.comn"><img
+                    <a href=""><img
                             src="{{ url_for('static',filename='icons/gmail.svg') }}" class="myicon"></a>
                 </div>
                 <br>

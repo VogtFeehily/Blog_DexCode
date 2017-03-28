@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 from app import db, create_app
 from app.models import User, Category, Post, Label, Comment, LikePost, LikeComment, DislikeComment

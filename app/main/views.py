@@ -111,7 +111,8 @@ def edit(id):
         post.summery = form.summery.data
         post.body = form.body.data
         # 在更新 post 的 label 之前先分出修改之前已经有的 Label 和修改后的 label
-        # 这样在更新该 label 的文章数仅更新修改过的 Label 的文章数，避免发生同一篇文章在一个 Label 上算成两篇甚至多篇文章这种情况
+        # 这样在更新该 label 的文章数仅更新修改过的 Label 的文章数
+        # 避免发生同一篇文章在一个 Label 上算成两篇甚至多篇文章这种情况
         # 1.修改文章时增加了 Label
         for label in labels:
             if label not in post.labels:
@@ -227,18 +228,16 @@ def post(id):
     # 区别用户是否对该文章点赞
     like = False
     # 确定用户已经登陆在进行判断，否则为 False
-    print(current_user)
     if current_user.is_authenticated:
         if LikePost.query.filter_by(post=post, user=current_user).first() is not None:
             like = True
-    print('Like:', like)
     page = request.args.get('page', 1, type=int)
     pagination = post.comments.order_by(Comment.timestamp.desc()).paginate(
         page, per_page=current_app.config['COMMENTS_PER_POST'], error_out=False)
     comments = pagination.items
     if form.validate_on_submit():
         comment = Comment(comment=form.comment.data, post=post, user=current_user)
-        #  P增加一个评论的同时将评论所在的ost 的评论数 +1
+        #  P增加一个评论的同时将评论所在的 post 的评论数 +1
         post.comment_num += 1
         db.session.add(post)
         db.session.commit()

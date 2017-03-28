@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}WRITE{% endblock %}
+{% block title %}WRITE | {% endblock %}
 
 {% block container %}
     {{ pagedown.include_pagedown() }}
@@ -17,21 +17,21 @@
                                 </div>
                                 <div class="col-md-4 col-sm-12 col-xs-12">
                                     {{ form.category.label }}
-                                    {{ form.category(class="form-control",placeholder="Title") }}
+                                    {{ form.category(class="form-control") }}
                                 </div>
                             </div>
                         {{ form.labels.label }}
                         <div class="tagsinput-primary">
                             {{ form.labels(class="form-control tagsinput") }}<br>
                         </div>
-                        <script type="text/javascript" src="{{ url_for('static',filename='flat/js/flat-ui.min.js') }}"></script>
+                        <script src="//cdn.bootcss.com/flat-ui/2.3.0/js/flat-ui.min.js"></script>
                         <script>
                             $(".tagsinput").tagsinput();
                         </script>
                         {{ form.summery.label }}
-                        {{ form.summery(class="form-control",placeholder="Title", rows="20") }}<br>
+                        {{ form.summery(class="form-control",placeholder="Summery", rows="20") }}<br>
                         {{ form.body.label }}
-                        {{ form.body(class="form-control",placeholder="Title", rows="50") }}<br>
+                        {{ form.body(class="form-control",placeholder="Body", rows="50") }}<br>
                         {{ form.submit }}
                     </form>
                 </article>

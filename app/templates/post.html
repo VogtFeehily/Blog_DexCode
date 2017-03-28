@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ post.title }} | {% endblock %}
 
 {% block container %}
     {{ pagedown.include_pagedown() }}
