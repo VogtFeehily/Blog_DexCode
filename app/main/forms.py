@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from flask_pagedown.fields import PageDownField
 from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length
+from ..models import Category
 
 
 class LoginForm(FlaskForm):

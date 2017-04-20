@@ -97,8 +97,7 @@
                     </script>
                     <!--百度分享END-->
                     <div style="margin-bottom: 60px;">
-                        <form method="post" action="">
-                            {{ form.csrf_token }}
+                        <form method="post" action="">                            {{ form.csrf_token }}
                             {{ form.comment.label }}
                             {{ form.comment(class="form-control",placeholder="有什么想说的都说出来吧...", rows="3") }}
                             <!-- 只有登录以后才允许评论，否则显示登录按钮 -->
