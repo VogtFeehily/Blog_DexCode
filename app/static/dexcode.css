@@ -75,27 +75,6 @@ body {
     background-color: #28a0f6;
 }
 
-/*
-*以下两个设置使得栅格系统的列高度一致
-*来自于OVERFLOW(http://stackoverflow.com/questions/19695784/how-can-i-make-bootstrap-columns-all-the-same-height)
-*BEGIN
-*/
-.row {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.row > [class*='col-'] {
-    display: flex;
-    flex-direction: column;
-}
-
-/*
-*END
-*/
 .blog-box {
     margin-bottom: 25px;
     background-color: #ffffff;

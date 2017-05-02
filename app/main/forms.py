@@ -1,9 +1,7 @@
 # coding=utf-8
 from flask_wtf import FlaskForm
-from flask_pagedown.fields import PageDownField
-from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length
-from ..models import Category
 
 
 class LoginForm(FlaskForm):
@@ -21,19 +19,19 @@ class PostForm(FlaskForm):
                                     ('机器学习', '机器学习'),
                                     ('数据分析', '数据分析')])
     title = StringField('Title', validators=[DataRequired()])
-    body = PageDownField('Body', validators=[DataRequired()])
-    summery = PageDownField('Summery', validators=[DataRequired()])
+    body = TextAreaField('Body', validators=[DataRequired()])
+    summery = TextAreaField('Summery', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
 class EditForm(FlaskForm):
     labels = StringField('Labels', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])
-    body = PageDownField('Body', validators=[DataRequired()])
-    summery = PageDownField('Summery', validators=[DataRequired()])
+    body = TextAreaField('Body', validators=[DataRequired()])
+    summery = TextAreaField('Summery', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
 class CommentForm(FlaskForm):
-    comment = PageDownField('评论框(现仅仅支持MarkDown格式,互评和编辑器后续开发中)', validators=[DataRequired()])
+    comment = TextAreaField('评论框(现仅仅支持MarkDown格式,互评和编辑器后续开发中)', validators=[DataRequired()])
     submit = SubmitField('Submit')

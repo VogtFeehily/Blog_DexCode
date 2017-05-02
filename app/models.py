@@ -126,7 +126,7 @@ class Post(db.Model):
             'a': ['href', 'rel'],
             'img': ['src', 'alt']
         }
-        target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
+        target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
                                                        tags=allowed_tags, attributes=attrs, strip=True))
 
     @staticmethod
@@ -138,7 +138,7 @@ class Post(db.Model):
             'a': ['href', 'rel'],
             'img': ['src', 'alt']
         }
-        target.summery_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
+        target.summery_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
                                                           tags=allowed_tags, attributes=attrs, strip=True))
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
@@ -198,7 +198,7 @@ class Comment(db.Model):
             'a': ['href', 'rel'],
             'img': ['src', 'alt']
         }
-        target.comment_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
+        target.comment_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
                                                           tags=allowed_tags, attributes=attrs, strip=True))
 
 
