@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField, TextAreaField, validators
+from wtforms.validators import DataRequired, Length,InputRequired
 
 
 class LoginForm(FlaskForm):
@@ -13,15 +13,16 @@ class LoginForm(FlaskForm):
 
 class PostForm(FlaskForm):
     labels = StringField('Labels', validators=[DataRequired()])
-    category = SelectField('Category', validators=[DataRequired()],
-                           choices=[('前端', '前端'),
-                                    ('后台', '后台'),
-                                    ('机器学习', '机器学习'),
-                                    ('数据分析', '数据分析')])
+    category = SelectField('Category', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])
     body = TextAreaField('Body', validators=[DataRequired()])
     summery = TextAreaField('Summery', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class CategoryForm(FlaskForm):
+    category = StringField('添加新的Category', validators=[DataRequired()])
+    submit = SubmitField('添加')
 
 
 class EditForm(FlaskForm):

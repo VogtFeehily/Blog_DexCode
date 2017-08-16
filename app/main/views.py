@@ -1,11 +1,33 @@
 # coding=utf-8
-from flask import render_template, request, current_app, redirect, url_for, flash, jsonify
+from datetime import datetime
+from flask import render_template, request, current_app, redirect, url_for, flash, jsonify, g
 from flask_login import login_required, login_user, logout_user, current_user
 from . import main
-from .forms import PostForm, EditForm, CommentForm, LoginForm
+from .forms import PostForm, EditForm, CommentForm, LoginForm, CategoryForm
 from .. import db
 from ..models import Category, Post, Label, Comment, User, LikePost
 from ..decorators import dexter_required
+
+
+def login():
+    g.loginform = LoginForm()
+    if g.loginform.validate_on_submit():
+        user = User.query.filter_by(username=g.loginform.username.data).first()
+        if user is not None and user.verify_password(g.loginform.password.data):
+            login_user(user, g.loginform.remember_me.data)
+            return redirect(url_for('main.index', user=user))
+        flash('用户不存在或者密码填写错误！')
+
+
+def add_category():
+    g.categoryForm = CategoryForm()
+    if g.categoryForm.is_submitted():
+        category = Category.query.filter_by(tag=g.categoryForm.category.data).first()
+        if category is None:
+            category = Category(tag=g.categoryForm.category.data, count=0)
+            db.session.add(category)
+            db.session.commit()
+    return redirect(url_for('main.write', user=current_user))
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -17,35 +39,56 @@ def index():
         page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
     # 登录表单
-    loginform = LoginForm()
-    if loginform.validate_on_submit():
-        user = User.query.filter_by(username=loginform.username.data).first()
-        if user is not None and user.verify_password(loginform.password.data):
-            login_user(user, loginform.remember_me.data)
-            return redirect(url_for('main.index'))
-        flash('用户不存在或者密码填写错误！')
-    return render_template('index.html', posts=posts, pagination=pagination, loginform=loginform, categories=categories
-                           , labels=labels)
+    login()
+    add_category()
+    return render_template('index.html', posts=posts, pagination=pagination, categories=categories,
+                           loginform=g.loginform, categoryForm=g.categoryForm, labels=labels)
 
 
-@main.route('/category/<tag>', methods=['GET'])
-def category(tag):
+@main.route('/category/<category>', methods=['GET'])
+def category(category):
     categories = Category.query.all()
-    category = Category.query.filter_by(tag=tag).first_or_404()
+    category = Category.query.filter_by(tag=category).first_or_404()
     page = request.args.get('page', 1, type=int)
     pagination = category.posts.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
     # 登录表单
-    loginform = LoginForm()
-    if loginform.validate_on_submit():
-        user = User.query.filter_by(username=loginform.username.data).first()
-        if user is not None and user.verify_password(loginform.password.data):
-            login_user(user, loginform.remember_me.data)
-            return redirect(url_for('main.category', tag=tag))
-        flash('用户不存在或者密码填写错误！')
-    return render_template('category.html', category=category, posts=posts, pagination=pagination, loginform=loginform
-                           , categories=categories)
+    login()
+    add_category()
+    return render_template('category.html', category=category, posts=posts, pagination=pagination,
+                           loginform=g.loginform, categoryForm=g.categoryForm, categories=categories)
+
+
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
+def post(id):
+    categories = Category.query.all()
+    form = CommentForm()
+    post = Post.query.get_or_404(id)
+    # 区别用户是否对该文章点赞
+    like = False
+    # 确定用户已经登陆在进行判断，否则为 False
+    if current_user.is_authenticated:
+        if LikePost.query.filter_by(post=post, user=current_user).first() is not None:
+            like = True
+    page = request.args.get('page', 1, type=int)
+    pagination = post.comments.order_by(Comment.timestamp.desc()).paginate(
+        page, per_page=current_app.config['COMMENTS_PER_PAGE'], error_out=False)
+    comments = pagination.items
+    if form.validate_on_submit():
+        comment = Comment(comment=form.comment.data, post=post, user=current_user)
+        #  P增加一个评论的同时将评论所在的 post 的评论数 +1
+        post.comment_num += 1
+        db.session.add(post)
+        db.session.commit()
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('main.post', id=id))
+    # 登录表单
+    login()
+    add_category()
+    return render_template("post.html", post=post, form=form, comments=comments, pagination=pagination
+                           , loginform=g.loginform, categoryForm=g.categoryForm, categories=categories, like=like)
 
 
 @main.route('/write', methods=['GET', 'POST'])
@@ -54,12 +97,18 @@ def category(tag):
 def write():
     categories = Category.query.all()
     form = PostForm()
-    loginform = LoginForm()
+    login()
+    add_category()
+    # 显示已有信息
+    choices = []
+    for category in categories:
+        choices.append((category.tag, category.tag))
+    form.category.choices = choices
     if form.validate_on_submit():
         labels = []
-        tag = form.category.data
-        labels_article = form.labels.data.split(',')
-        for l in labels_article:
+        category = form.category.data
+        labels_post = form.labels.data.split(',')
+        for l in labels_post:
             label = Label.query.filter_by(label=l).first()
             if label is None:
                 label = Label(label=l, count=0)
@@ -69,7 +118,7 @@ def write():
         post = Post(title=form.title.data,
                     summery=form.summery.data,
                     body=form.body.data,
-                    category=Category.query.filter_by(tag=tag).first(),
+                    category=Category.query.filter_by(tag=category).first(),
                     labels=labels,
                     comment_num=0,
                     like_num=0)
@@ -85,7 +134,7 @@ def write():
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('main.post', id=post.id))
-    return render_template("write.html", form=form, loginform=loginform, categories=categories)
+    return render_template("write.html", form=form, loginform=g.loginform, categories=categories, categoryForm=g.categoryForm)
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -95,13 +144,16 @@ def edit(id):
     categories = Category.query.all()
     post = Post.query.get_or_404(id)
     form = EditForm()
-    loginform = LoginForm()
+    login()
+    add_category()
     if form.validate_on_submit():
+        add = False
         labels = []
-        labels_article = form.labels.data.split(',')
-        for l in labels_article:
+        labels_post = form.labels.data.split(',')
+        for l in labels_post:
             label = Label.query.filter_by(label=l).first()
             if label is None:
+                add = True
                 label = Label(label=l, count=0)
                 db.session.add(label)
                 db.session.commit()
@@ -110,22 +162,25 @@ def edit(id):
         post.title = form.title.data
         post.summery = form.summery.data
         post.body = form.body.data
+        post.timestamp_update = datetime.utcnow()
         # 在更新 post 的 label 之前先分出修改之前已经有的 Label 和修改后的 label
         # 这样在更新该 label 的文章数仅更新修改过的 Label 的文章数
         # 避免发生同一篇文章在一个 Label 上算成两篇甚至多篇文章这种情况
         # 1.修改文章时增加了 Label
-        for label in labels:
-            if label not in post.labels:
-                label.count += 1
-                db.session.add(label)
-                db.session.commit()
+        if add:
+            for label in labels:
+                if label not in post.labels:
+                    label.count += 1
+                    db.session.add(label)
+                    db.session.commit()
         # 2.修改文章时删除了某些 Label
-        # 遍历未修改之前的 Label
-        for label in post.labels:
-            if label not in labels:
-                label.count -= 1
-                db.session.add(label)
-                db.session.commit()
+        else:
+            # 遍历未修改之前的 Label
+            for label in post.labels:
+                if label not in labels:
+                    label.count -= 1
+                    db.session.add(label)
+                    db.session.commit()
         # 更新 post 的 label
         post.labels = labels
         db.session.add(post)
@@ -140,8 +195,8 @@ def edit(id):
         str += label.label
         str += ','
     form.labels.data = str
-    return render_template("edit.html", form=form, category=post.category.tag, loginform=loginform
-                           , categories=categories)
+    return render_template("edit.html", form=form, category=post.category, loginform=g.loginform
+                           , categoryForm=g.categoryForm, categories=categories)
 
 
 @main.route('/delete/<int:id>', methods=['GET'])
@@ -219,37 +274,3 @@ def undo_like_post():
     return jsonify(likes=post.like_num)
 
 
-@main.route('/post/<int:id>', methods=['GET', 'POST'])
-def post(id):
-    categories = Category.query.all()
-    form = CommentForm()
-    loginform = LoginForm()
-    post = Post.query.get_or_404(id)
-    # 区别用户是否对该文章点赞
-    like = False
-    # 确定用户已经登陆在进行判断，否则为 False
-    if current_user.is_authenticated:
-        if LikePost.query.filter_by(post=post, user=current_user).first() is not None:
-            like = True
-    page = request.args.get('page', 1, type=int)
-    pagination = post.comments.order_by(Comment.timestamp.desc()).paginate(
-        page, per_page=current_app.config['COMMENTS_PER_POST'], error_out=False)
-    comments = pagination.items
-    if form.validate_on_submit():
-        comment = Comment(comment=form.comment.data, post=post, user=current_user)
-        #  P增加一个评论的同时将评论所在的 post 的评论数 +1
-        post.comment_num += 1
-        db.session.add(post)
-        db.session.commit()
-        db.session.add(comment)
-        db.session.commit()
-        return redirect(url_for('main.post', id=id))
-    # 登录表单
-    if loginform.validate_on_submit():
-        user = User.query.filter_by(username=loginform.username.data).first()
-        if user is not None and user.verify_password(loginform.password.data):
-            login_user(user, loginform.remember_me.data)
-            return redirect(url_for('main.post', id=id))
-        flash('用户不存在或者密码填写错误！')
-    return render_template("post.html", post=post, form=form, comments=comments, pagination=pagination
-                           , loginform=loginform, categories=categories, like=like)

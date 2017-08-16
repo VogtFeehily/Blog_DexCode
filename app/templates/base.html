@@ -43,6 +43,9 @@
                         {% for category in categories %}
                             <li><a href="/category/{{ category.tag }}">{{ category.tag }} <span class="badge">{{ category.count }}</span></a></li>
                         {% endfor %}
+                        {% if current_user.is_authenticated %}
+                            <li data-toggle="modal" data-target="#addCategory"><a>Add Category</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 <li><a href="/me">About Me</a></li>
@@ -100,6 +103,25 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="addCategory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" aria-hidden="true" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="">
+                    {{ categoryForm.category.label }}
+                    {{ categoryForm.category(class="form-control",placeholder="Category") }}<br>
+                    <div>{{ categoryForm.submit(class="btn btn-primary") }}</div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 {% block container %}
@@ -109,20 +131,18 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-7 col-xs-12 dexcode">
-                <p class="lead" style="padding-top: 30px;"><strong>&copy;Dexter 2016</strong></p>
+                <p class="lead" style="padding-top: 30px;"><strong>&copy;Dexter 2017</strong></p>
             </div>
             <div class="col-md-5 col-xs-12 dexcode">
                 <div>
-                    <a href=""><img
+                    <a href="https://github.com/VogtFeehily"><img
                             src="{{ url_for('static',filename='icons/github.svg') }}" class="myicon"></a>
-                    <a href=""><img
+                    <a href="http://weibo.com/u/5347547799"><img
                             src="{{ url_for('static',filename='icons/weibo.svg') }}" class="myicon"></a>
-                    <a href=""><img
+                    <a href="https://www.zhihu.com/people/wen-yi-yuan-ma-chu-de-ren-sheng/answers"><img
                             src="{{ url_for('static',filename='icons/zhihu.svg') }}" class="myicon"></a>
-                    <a href=""><img
+                    <a href="https://twitter.com/Vogtfeehily"><img
                             src="{{ url_for('static',filename='icons/twitter.svg') }}" class="myicon"></a>
-                    <a href=""><img
-                            src="{{ url_for('static',filename='icons/google+.svg') }}" class="myicon"></a>
                     <a href=""><img
                             src="{{ url_for('static',filename='icons/gmail.svg') }}" class="myicon"></a>
                 </div>

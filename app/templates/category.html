@@ -55,7 +55,7 @@
 
         {% if pagination %}
             <div>
-                {{ macros.pagination_widget(pagination, '.category', tag = category.tag) }}
+                {{ macros.pagination_widget(pagination, '.category', tag = category.tag, category = category) }}
             </div>
         {% endif %}
     </div>

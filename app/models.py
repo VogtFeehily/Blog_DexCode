@@ -1,11 +1,11 @@
 # coding=utf-8
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from markdown import markdown
 from flask_login import UserMixin, AnonymousUserMixin
-import bleach
+
 from . import login_manager
 from . import db
+from . import markdown
 
 
 class User(UserMixin, db.Model):
@@ -57,22 +57,6 @@ class Category(db.Model):
     count = db.Column(db.Integer, default=0)
     posts = db.relationship('Post', backref='category', lazy='dynamic')
 
-    @staticmethod
-    # 运行后自动插入定义的 category
-    def insert_category():
-        categories = {
-            '前端',
-            '后台',
-            '机器学习',
-            '数据分析'
-        }
-        for c in categories:
-            category = Category.query.filter_by(tag=c).first()
-            if category is None:
-                category = Category(tag=c, count=0)
-                db.session.add(category)
-                db.session.commit()
-
 
 # Post 和 Label 的关联表
 registrations = db.Table('registrations',
@@ -98,48 +82,14 @@ class Post(db.Model):
                              secondary=registrations,
                              backref=db.backref('posts', lazy='dynamic'),
                              lazy='dynamic')
-    
-    '''
-    @staticmethod
-    # 创建假文章数据
-    def generate_fake(count=100):
-        from random import seed, randint
-        import forgery_py
-
-        seed()
-        for i in range(count):
-            p = Post(title=forgery_py.lorem_ipsum.title(randint(1, 3)),
-                     summery=forgery_py.lorem_ipsum.sentences(randint(20, 50)),
-                     body=forgery_py.lorem_ipsum.sentences(randint(50, 100)),
-                     category=Category.query.filter_by(id=randint(1, 4)).first(),
-                     timestamp=forgery_py.date.date(True))
-            db.session.add(p)
-            db.session.commit()
-    '''
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'blockquote', 'em', 'i', 'strong',
-                        'li', 'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'img']
-        attrs = {
-            '*': ['class'],
-            'a': ['href', 'rel'],
-            'img': ['src', 'alt']
-        }
-        target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
-                                                       tags=allowed_tags, attributes=attrs, strip=True))
+        target.body_html = markdown(value)
 
     @staticmethod
     def on_changed_summery(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'blockquote', 'em', 'i', 'strong',
-                        'li', 'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'img']
-        attrs = {
-            '*': ['class'],
-            'a': ['href', 'rel'],
-            'img': ['src', 'alt']
-        }
-        target.summery_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
-                                                          tags=allowed_tags, attributes=attrs, strip=True))
+        target.summery_html = markdown(value)
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 db.event.listen(Post.summery, 'set', Post.on_changed_summery)
@@ -154,25 +104,13 @@ class Label(db.Model):
     # 和Post是多对多的关系
 
     @staticmethod
-    # 运行后自动插入定义的 label
-    def insert_label():
-        labels = {
-            'Python',
-            'Flask',
-            'Java',
-            'JSP',
-            'Android',
-            'HTML5',
-            'JavaScript',
-            'JQuery',
-            'Ajax'
-        }
-        for l in labels:
-            label = Label.query.filter_by(label=l).first()
-            if label is None:
-                label = Label(label=l, count=0)
-                db.session.add(label)
-                db.session.commit()
+    # 添加一个新的label
+    def insert_label(lbl):
+        label = Label.query.filter_by(label=lbl).first()
+        if label is None:
+            label = Label(label=lbl, count=0)
+            db.session.add(label)
+            db.session.commit()
 
 
 class Comment(db.Model):
@@ -191,17 +129,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_comment(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'blockquote', 'em', 'i', 'strong',
-                        'li', 'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'img']
-        attrs = {
-            '*': ['class'],
-            'a': ['href', 'rel'],
-            'img': ['src', 'alt']
-        }
-        target.comment_html = bleach.linkify(bleach.clean(markdown(value, output_format='html', extensions=['markdown.extensions.extra']),
-                                                          tags=allowed_tags, attributes=attrs, strip=True))
-
-
+        target.comment_html = markdown(value)
 db.event.listen(Comment.comment, 'set', Comment.on_changed_comment)
 
 

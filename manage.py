@@ -4,6 +4,7 @@ from app import db, create_app
 from app.models import User, Category, Post, Label, Comment, LikePost, LikeComment, DislikeComment
 from flask_script import Manager, Shell
 
+
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 
